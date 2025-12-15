@@ -1,0 +1,5 @@
+edapi
+python-dotenv
+requests
+fuzzywuzzy[speedup]
+
