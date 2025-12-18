@@ -9,132 +9,517 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+            line-height: 1;
+        }
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .chart-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .chart-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .chart-title {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .chart-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .hw-table-container {
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+        .hw-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .hw-table thead {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%);
+            color: #f1f5f9;
+        }
+        .hw-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .hw-table td {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+        .hw-table tbody tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .llm-badge {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin: 0.125rem;
+        }
+        .provider-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .provider-openai { background: rgba(16, 163, 127, 0.2); color: #34d399; }
+        .provider-google { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+        .provider-anthropic { background: rgba(217, 119, 87, 0.2); color: #f87171; }
+        .provider-deepseek { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .provider-mistral { background: rgba(249, 115, 22, 0.2); color: #fb923c; }
+        .provider-xai { background: rgba(168, 85, 247, 0.2); color: #a78bfa; }
+
+        .insight-section {
+            margin-bottom: 3rem;
+        }
+        .insight-section h3 {
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 0.5rem;
+        }
+
+        .llm-comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        .llm-detail-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .llm-detail-card h4 {
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .llm-detail-card .count {
+            background: #3b82f6;
+            color: white;
+            padding: 0.125rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+        .llm-detail-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .llm-detail-card .strengths {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .llm-detail-card .tag {
+            display: inline-block;
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            padding: 0.125rem 0.375rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-right: 0.25rem;
+        }
+
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .chart-row { grid-template-columns: 1fr; }
+            .llm-comparison-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
     <div class="page-container">
-        <!-- Header -->
+        <!-- Header with Navigation -->
         <header class="site-header">
             <div class="header-content">
-                <div class="header-badge">CS 182/282A</div>
-                <div class="header-text">
-                    <h1 class="site-title">Special Participation A</h1>
-                    <p class="site-subtitle">Deep Learning LLM Evaluation Directory</p>
+                <div class="header-left">
+                    <span class="header-badge">CS 182/282A</span>
+                    <span class="site-title">Special Participation A</span>
+                    <span class="header-divider">|</span>
+                    <span class="site-subtitle">Deep Learning LLM Evaluation Directory</span>
                 </div>
+                <nav class="header-nav">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="browse.html" class="nav-link">Browse</a>
+                    <a href="syllabus.html" class="nav-link">Syllabus</a>
+                    <a href="insights.html" class="nav-link active">Insights</a>
+                </nav>
             </div>
         </header>
 
-        <!-- Navigation -->
-        <nav class="main-nav">
-            <a href="index.html" class="nav-link">Home</a>
-            <a href="browse.html" class="nav-link">Browse</a>
-            <a href="syllabus.html" class="nav-link">Syllabus</a>
-            <a href="insights.html" class="nav-link active">Insights</a>
-        </nav>
-
         <!-- Main Content -->
         <main class="main-content insights-page">
-            <h2 class="page-title">Key Insights: How LLMs Perform on Deep Learning Homework</h2>
+            <h2 class="page-title">Data Insights: LLM Performance on Deep Learning Homework</h2>
+
+            <!-- Key Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-submissions">168</div>
+                    <div class="stat-label">Total Submissions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-authors">167</div>
+                    <div class="stat-label">Unique Authors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-llms">25+</div>
+                    <div class="stat-label">LLMs Tested</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-providers">10</div>
+                    <div class="stat-label">AI Providers</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <section class="insight-section">
+                <h3>LLM Usage Distribution</h3>
+                <div class="chart-container">
+                    <img src="chart_llm_distribution.png" alt="Top 10 LLMs by Submission Count">
+                </div>
+            </section>
 
             <section class="insight-section">
-                <h3>Overall Performance Patterns</h3>
-                <div class="insight-cards">
-                    <div class="insight-card">
-                        <div class="insight-icon">&#x1F4DD;</div>
-                        <h4>Mathematical Derivations</h4>
-                        <p>Most LLMs perform well on structured mathematical problems with clear steps. Models like Claude Opus 4.5, GPT 5.1, and DeepSeek often one-shot algebraic derivations correctly.</p>
+                <h3>Provider & Homework Analysis</h3>
+                <div class="chart-row">
+                    <div class="chart-container">
+                        <img src="chart_provider_distribution.png" alt="Submissions by Provider">
                     </div>
-                    <div class="insight-card">
-                        <div class="insight-icon">&#x1F914;</div>
-                        <h4>Conceptual Questions</h4>
-                        <p>LLMs tend to struggle more with intuition-based questions, often giving "first plausible" explanations that require human pushback to correct.</p>
-                    </div>
-                    <div class="insight-card">
-                        <div class="insight-icon">&#x26A0;</div>
-                        <h4>Confidence vs. Correctness</h4>
-                        <p>A recurring pattern is that models sound confident even when reasoning is incomplete or incorrect. They often hallucinate intermediate steps.</p>
+                    <div class="chart-container">
+                        <img src="chart_hw_distribution.png" alt="Submissions per Homework">
                     </div>
                 </div>
             </section>
 
             <section class="insight-section">
-                <h3>Common Strengths</h3>
-                <ul class="insight-list strengths">
-                    <li>Strong performance on linear algebra and matrix calculus</li>
-                    <li>Good at following step-by-step derivation patterns</li>
-                    <li>Useful for brainstorming proof structures and confirming intuition</li>
-                    <li>Effective at explaining well-known results and concepts</li>
-                    <li>Models with "thinking" modes show improved reasoning transparency</li>
-                </ul>
+                <h3>LLM Usage by Homework Assignment</h3>
+                <div class="chart-container">
+                    <img src="chart_llm_by_hw.png" alt="LLM Usage by Homework">
+                </div>
             </section>
 
+            <!-- Homework Breakdown Table -->
             <section class="insight-section">
-                <h3>Common Weaknesses</h3>
-                <ul class="insight-list weaknesses">
-                    <li><strong>Subtle Math Errors:</strong> Missing constants, incorrect simplifications, unjustified assumptions</li>
-                    <li><strong>PDF Parsing Issues:</strong> Some models struggle to correctly interpret mathematical notation from images</li>
-                    <li><strong>Hallucination:</strong> Models make up intermediate steps or explanations when unsure</li>
-                    <li><strong>Context Length:</strong> Longer problems cause format adherence decline and reasoning compression</li>
-                    <li><strong>Visual Analysis:</strong> Models tend to "guess" based on domain knowledge rather than analyzing actual data</li>
-                </ul>
+                <h3>Homework Submission Breakdown</h3>
+                <div class="hw-table-container">
+                    <table class="hw-table">
+                        <thead>
+                            <tr>
+                                <th>Homework</th>
+                                <th>Submissions</th>
+                                <th>Top LLMs Used</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>HW0</strong></td>
+                                <td>14</td>
+                                <td><span class="llm-badge">Grok (3)</span><span class="llm-badge">GPT-5.1 Thinking (2)</span><span class="llm-badge">Gemini Pro 3 (2)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>HW1</strong></td>
+                                <td>12</td>
+                                <td><span class="llm-badge">Qwen (2)</span><span class="llm-badge">Claude Opus 4.5 (2)</span><span class="llm-badge">GPT-5.1 Thinking (2)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>HW2</strong></td>
+                                <td>10</td>
+                                <td><span class="llm-badge">Mistral (2)</span><span class="llm-badge">DeepSeek (2)</span><span class="llm-badge">Claude Opus 4.5 (2)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>HW3</strong></td>
+                                <td>12</td>
+                                <td><span class="llm-badge">Mistral (3)</span><span class="llm-badge">Gemini Pro 3 (2)</span><span class="llm-badge">GPT-4o (2)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>HW4</strong></td>
+                                <td>10</td>
+                                <td><span class="llm-badge">Kimi K2 (2)</span><span class="llm-badge">GPT-5 (2)</span><span class="llm-badge">DeepSeek (2)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>HW5</strong></td>
+                                <td>13</td>
+                                <td><span class="llm-badge">Grok (3)</span><span class="llm-badge">Mistral (2)</span><span class="llm-badge">Gemini Pro 3 (2)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>HW6</strong></td>
+                                <td>13</td>
+                                <td><span class="llm-badge">Claude Sonnet 4.5 (3)</span><span class="llm-badge">Gemini Pro 3 (2)</span><span class="llm-badge">Grok (2)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>HW7</strong></td>
+                                <td>13</td>
+                                <td><span class="llm-badge">DeepSeek v3.2 (2)</span><span class="llm-badge">Qwen (2)</span><span class="llm-badge">GPT-5 (2)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>HW8</strong></td>
+                                <td>15</td>
+                                <td><span class="llm-badge">Mistral (3)</span><span class="llm-badge">Gemini Pro 3 (2)</span><span class="llm-badge">DeepSeek v3.2 (2)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>HW9</strong></td>
+                                <td>16</td>
+                                <td><span class="llm-badge">Kimi K2 (2)</span><span class="llm-badge">DeepSeek v3.2 (2)</span><span class="llm-badge">GPT-5.1 Thinking (2)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>HW10</strong></td>
+                                <td>12</td>
+                                <td><span class="llm-badge">GPT-5.1 Thinking (2)</span><span class="llm-badge">DeepSeek v3.2 (2)</span><span class="llm-badge">GPT-5 (2)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>HW11</strong></td>
+                                <td>11</td>
+                                <td><span class="llm-badge">Gemini Pro 3 (2)</span><span class="llm-badge">Grok (2)</span><span class="llm-badge">Claude Sonnet 4.5 (2)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>HW12</strong></td>
+                                <td>10</td>
+                                <td><span class="llm-badge">Qwen (2)</span><span class="llm-badge">Mistral (2)</span><span class="llm-badge">Claude Opus 4.5 (2)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>HW13</strong></td>
+                                <td>7</td>
+                                <td><span class="llm-badge">GPT-4o (1)</span><span class="llm-badge">Gemini 2.5 Flash (1)</span><span class="llm-badge">Claude Opus 4.5 (1)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </section>
 
+            <!-- Provider Breakdown -->
             <section class="insight-section">
-                <h3>LLM-Specific Observations</h3>
-                <div class="llm-grid">
-                    <div class="llm-card">
-                        <h4>Claude (Sonnet/Opus 4.5)</h4>
-                        <p>Excellent at algebraic reasoning and optimization problems. Extended thinking mode produces rigorous, paper-like solutions. Strong on mechanical reasoning, weaker on conceptual intuition without prompting.</p>
+                <h3>Provider Market Share</h3>
+                <div class="hw-table-container">
+                    <table class="hw-table">
+                        <thead>
+                            <tr>
+                                <th>Provider</th>
+                                <th>Submissions</th>
+                                <th>Market Share</th>
+                                <th>Models Used</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="provider-badge provider-openai">OpenAI</span></td>
+                                <td>46</td>
+                                <td>27.4%</td>
+                                <td>GPT-5.1 Thinking, GPT-5, GPT-4o, GPT o1/o3, ChatGPT</td>
+                            </tr>
+                            <tr>
+                                <td><span class="provider-badge provider-google">Google</span></td>
+                                <td>32</td>
+                                <td>19.0%</td>
+                                <td>Gemini Pro 3, Gemini 2.5 Flash, Gemini 2.5 Pro</td>
+                            </tr>
+                            <tr>
+                                <td><span class="provider-badge provider-anthropic">Anthropic</span></td>
+                                <td>24</td>
+                                <td>14.3%</td>
+                                <td>Claude Opus 4.5, Claude Sonnet 4.5, Claude 3.5</td>
+                            </tr>
+                            <tr>
+                                <td><span class="provider-badge provider-deepseek">DeepSeek</span></td>
+                                <td>19</td>
+                                <td>11.3%</td>
+                                <td>DeepSeek, DeepSeek v3.2</td>
+                            </tr>
+                            <tr>
+                                <td><span class="provider-badge provider-mistral">Mistral AI</span></td>
+                                <td>13</td>
+                                <td>7.7%</td>
+                                <td>Mistral</td>
+                            </tr>
+                            <tr>
+                                <td><span class="provider-badge provider-xai">xAI</span></td>
+                                <td>12</td>
+                                <td>7.1%</td>
+                                <td>Grok</td>
+                            </tr>
+                            <tr>
+                                <td><span class="provider-badge" style="background: rgba(139, 92, 246, 0.2); color: #a78bfa;">Alibaba</span></td>
+                                <td>10</td>
+                                <td>6.0%</td>
+                                <td>Qwen</td>
+                            </tr>
+                            <tr>
+                                <td><span class="provider-badge" style="background: rgba(14, 165, 233, 0.2); color: #38bdf8;">Moonshot AI</span></td>
+                                <td>10</td>
+                                <td>6.0%</td>
+                                <td>Kimi K2</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Detailed LLM Analysis -->
+            <section class="insight-section">
+                <h3>LLM Performance Analysis (Based on Student Reports)</h3>
+                <div class="llm-comparison-grid">
+                    <div class="llm-detail-card">
+                        <h4>Mistral <span class="count">13 submissions</span></h4>
+                        <p>High accuracy (99%) reported on some assignments with minimal errors. Zero arithmetic errors on well-structured problems. Tends to initially act as pedagogical tutor rather than solution generator.</p>
+                        <div class="strengths">
+                            <span class="tag">High Accuracy</span>
+                            <span class="tag">No Arithmetic Errors</span>
+                            <span class="tag">Pedagogical</span>
+                        </div>
                     </div>
-                    <div class="llm-card">
-                        <h4>GPT 5.1 (Pro/Thinking/Extended)</h4>
-                        <p>Impressive one-shot capabilities on many problems. Useful as a "pocket-TA" but requires fundamental understanding to verify outputs. Extended thinking mode shows clearer reasoning.</p>
-                    </div>
-                    <div class="llm-card">
-                        <h4>DeepSeek v3.2</h4>
-                        <p>Strong grasp of linear algebra and calculus concepts. Good chain-of-thought reasoning. Tendency to simplify qualitative analysis using numerical examples rather than general derivations.</p>
-                    </div>
-                    <div class="llm-card">
-                        <h4>Gemini (Pro 3 / Flash)</h4>
+                    <div class="llm-detail-card">
+                        <h4>Gemini Pro 3 <span class="count">13 submissions</span></h4>
                         <p>Consistently includes intermediate steps that other LLMs skip. Good at geometric interpretations. "Thinking" mode delivers interpretations clearly on first try.</p>
+                        <div class="strengths">
+                            <span class="tag">Detailed Steps</span>
+                            <span class="tag">Geometric Intuition</span>
+                            <span class="tag">Thinking Mode</span>
+                        </div>
                     </div>
-                    <div class="llm-card">
-                        <h4>Mistral</h4>
-                        <p>High accuracy (99%) on some assignments with minimal errors. Zero arithmetic errors on well-structured problems. Initially acts as pedagogical tutor rather than solution key.</p>
+                    <div class="llm-detail-card">
+                        <h4>Grok <span class="count">12 submissions</span></h4>
+                        <p>Strong performance on mathematical derivations. Popular for HW0 and HW5. Good reasoning capabilities with clear explanations.</p>
+                        <div class="strengths">
+                            <span class="tag">Math Derivations</span>
+                            <span class="tag">Clear Explanations</span>
+                        </div>
                     </div>
-                    <div class="llm-card">
-                        <h4>Kimi K2</h4>
+                    <div class="llm-detail-card">
+                        <h4>GPT-5.1 Thinking <span class="count">11 submissions</span></h4>
+                        <p>Impressive one-shot capabilities on many problems. Extended thinking mode shows clearer reasoning chains. Useful as a "pocket-TA" but requires fundamental understanding to verify outputs.</p>
+                        <div class="strengths">
+                            <span class="tag">One-Shot</span>
+                            <span class="tag">Extended Thinking</span>
+                            <span class="tag">Verification Needed</span>
+                        </div>
+                    </div>
+                    <div class="llm-detail-card">
+                        <h4>Claude Opus 4.5 <span class="count">10 submissions</span></h4>
+                        <p>Excellent at algebraic reasoning and optimization problems. Extended thinking mode produces rigorous, paper-like solutions. Strong on mechanical reasoning, weaker on conceptual intuition without prompting.</p>
+                        <div class="strengths">
+                            <span class="tag">Algebraic Reasoning</span>
+                            <span class="tag">Rigorous</span>
+                            <span class="tag">Paper-like Output</span>
+                        </div>
+                    </div>
+                    <div class="llm-detail-card">
+                        <h4>DeepSeek v3.2 <span class="count">9 submissions</span></h4>
+                        <p>Strong grasp of linear algebra and calculus. Good chain-of-thought reasoning. Interesting finding: reasoning in Chinese accelerates response by 2.5x and saves 2/3 tokens!</p>
+                        <div class="strengths">
+                            <span class="tag">Linear Algebra</span>
+                            <span class="tag">Chain-of-Thought</span>
+                            <span class="tag">Multilingual</span>
+                        </div>
+                    </div>
+                    <div class="llm-detail-card">
+                        <h4>Qwen <span class="count">10 submissions</span></h4>
+                        <p>Strong performance on mathematical derivations. Good at structured problems with clear steps. Competitive with Western models on technical content.</p>
+                        <div class="strengths">
+                            <span class="tag">Math Focus</span>
+                            <span class="tag">Structured Problems</span>
+                        </div>
+                    </div>
+                    <div class="llm-detail-card">
+                        <h4>Kimi K2 <span class="count">7 submissions</span></h4>
                         <p>Strong performance on mathematical derivations. Good at structured problems with clear steps. Sometimes needs explicit prompting for detailed explanations.</p>
+                        <div class="strengths">
+                            <span class="tag">Math Derivations</span>
+                            <span class="tag">Needs Prompting</span>
+                        </div>
                     </div>
                 </div>
             </section>
 
+            <!-- Key Findings -->
             <section class="insight-section">
-                <h3>Recommendations for Using LLMs on Homework</h3>
-                <div class="recommendations">
-                    <div class="rec-item">
-                        <span class="rec-number">1</span>
-                        <p>Use LLMs for brainstorming and verifying intuition, not as a replacement for understanding</p>
+                <h3>Key Findings from Student Submissions</h3>
+                <div class="chart-container" style="padding: 2rem;">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+                        <div>
+                            <h4 style="color: #4ade80; margin-bottom: 1rem;">Common Strengths</h4>
+                            <ul style="color: var(--text-muted); line-height: 1.8;">
+                                <li>Strong performance on linear algebra and matrix calculus</li>
+                                <li>Good at following step-by-step derivation patterns</li>
+                                <li>Effective at explaining well-known results</li>
+                                <li>"Thinking" modes improve reasoning transparency</li>
+                                <li>Most can one-shot structured problems</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: #f87171; margin-bottom: 1rem;">Common Weaknesses</h4>
+                            <ul style="color: var(--text-muted); line-height: 1.8;">
+                                <li>Subtle math errors: missing constants, wrong simplifications</li>
+                                <li>PDF/image parsing issues with mathematical notation</li>
+                                <li>Hallucinate intermediate steps when unsure</li>
+                                <li>Context length causes reasoning compression</li>
+                                <li>Visual analysis often based on guessing</li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="rec-item">
-                        <span class="rec-number">2</span>
-                        <p>Always verify mathematical derivations - subtle errors are common</p>
-                    </div>
-                    <div class="rec-item">
-                        <span class="rec-number">3</span>
-                        <p>Use "thinking" or "extended thinking" modes when available for better reasoning</p>
-                    </div>
-                    <div class="rec-item">
-                        <span class="rec-number">4</span>
-                        <p>Provide explicit instructions for output format and level of detail</p>
-                    </div>
-                    <div class="rec-item">
-                        <span class="rec-number">5</span>
-                        <p>When models struggle, break problems into smaller parts</p>
-                    </div>
-                    <div class="rec-item">
-                        <span class="rec-number">6</span>
-                        <p>Human oversight remains essential - "meaningful human guidance is required throughout"</p>
-                    </div>
+                </div>
+            </section>
+
+            <!-- Recommendations -->
+            <section class="insight-section">
+                <h3>Recommendations for Using LLMs</h3>
+                <div class="chart-container" style="padding: 2rem;">
+                    <ol style="color: var(--text-color); line-height: 2; padding-left: 1.5rem;">
+                        <li><strong>Use LLMs for brainstorming and verifying intuition</strong>, not as a replacement for understanding</li>
+                        <li><strong>Always verify mathematical derivations</strong> - subtle errors are common across all models</li>
+                        <li><strong>Use "thinking" or "extended thinking" modes</strong> when available for better reasoning</li>
+                        <li><strong>Provide explicit instructions</strong> for output format and level of detail</li>
+                        <li><strong>Break complex problems into smaller parts</strong> when models struggle</li>
+                        <li><strong>Human oversight remains essential</strong> - "meaningful human guidance is required throughout"</li>
+                        <li><strong>Try multiple models</strong> - different LLMs excel at different problem types</li>
+                    </ol>
                 </div>
             </section>
         </main>

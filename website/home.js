@@ -63,8 +63,8 @@
         const sorted = Object.entries(counts)
             .sort((a, b) => b[1] - a[1]);
 
-        container.innerHTML = sorted.map(([provider, count]) =>
-            `<a href="browse.html?provider=${encodeURIComponent(provider)}" class="tag-link">
+        container.innerHTML = sorted.map(([provider, count], index) =>
+            `<a href="browse.html?provider=${encodeURIComponent(provider)}" class="tag-link" style="animation-delay: ${index * 0.05}s">
                 ${escapeHtml(provider)} <span class="tag-count">${count}</span>
             </a>`
         ).join('');
@@ -84,8 +84,8 @@
             .sort((a, b) => b[1] - a[1])
             .slice(0, 12); // Top 12
 
-        container.innerHTML = sorted.map(([llm, count]) =>
-            `<a href="browse.html?llm=${encodeURIComponent(llm)}" class="tag-link">
+        container.innerHTML = sorted.map(([llm, count], index) =>
+            `<a href="browse.html?llm=${encodeURIComponent(llm)}" class="tag-link" style="animation-delay: ${index * 0.05}s">
                 ${escapeHtml(llm)} <span class="tag-count">${count}</span>
             </a>`
         ).join('');
@@ -108,8 +108,8 @@
             return numA - numB;
         });
 
-        container.innerHTML = sorted.map(([hw, count]) =>
-            `<a href="browse.html?hw=${encodeURIComponent(hw)}" class="tag-link">
+        container.innerHTML = sorted.map(([hw, count], index) =>
+            `<a href="browse.html?hw=${encodeURIComponent(hw)}" class="tag-link" style="animation-delay: ${index * 0.05}s">
                 ${escapeHtml(hw)} <span class="tag-count">${count}</span>
             </a>`
         ).join('');

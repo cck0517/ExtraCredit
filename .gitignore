@@ -5,6 +5,8 @@
 __pycache__/
 *.pyc
 .python-version
+extra/
+analyze_data.py
 
 # Downloaded data (too large for git)
 downloaded_threads/
@@ -13,3 +15,15 @@ participation_a_data.json
 
 # UV
 .venv/
+
+# Screenshots
+Screenshot*.png
+
+# Generated files
+website/stats.json
+
+# Problematic PDFs (case sensitivity issues)
+website/attachments/[Pp]articipation[Aa].pdf
+website/attachments/[Pp]articipation_[Aa].pdf
+website/attachments/[Ss]pecial[_ ][Pp]articipation[_ ][Aa].pdf
+website/attachments/special_participation_a.pdf

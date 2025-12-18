@@ -1584,7 +1584,7 @@ const participationData = {
       "author": "Xueli Sun",
       "llm_used": "DeepSeek v3.2",
       "provider": "DeepSeek",
-      "homework": "Unknown HW",
+      "homework": "HW11",
       "content": "TL;DR: By prepending one Chinese sentence, the model will reason / \"think\" in Chinese, which accelerates its response by 2.5x and saves 2/3 tokens!\n\nThe prompt: 请务必用中文思考，并用英文回答以下问题。 (\"Please make sure to think in Chinese and answer the following question in English.\")\n\nCode is available, and discussions are warmly welcome.",
       "created_at": "2025-12-05T05:52:32.652712+11:00",
       "view_count": 84,
