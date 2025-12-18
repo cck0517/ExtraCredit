@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse all Special Participation A submissions for CS 182/282A Deep Learning.">
+    <title>Browse Submissions | CS 182/282A Special Participation A</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="page-container">
+        <!-- Header -->
+        <header class="site-header">
+            <div class="header-content">
+                <h1 class="site-title">Special Participation A</h1>
+                <p class="site-subtitle">CS 182/282A Deep Learning Directory</p>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="browse.html" class="nav-link active">Browse All</a>
+            <a href="browse.html?view=llm" class="nav-link">By LLM</a>
+            <a href="browse.html?view=homework" class="nav-link">By Homework</a>
+            <a href="insights.html" class="nav-link">Insights</a>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content browse-page">
+            <!-- Search and Controls -->
+            <div class="browse-controls">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search by student, LLM, homework, or keyword..." class="search-input">
+                </div>
+                <div class="control-row">
+                    <div class="filter-group">
+                        <label for="providerFilter">Provider:</label>
+                        <select id="providerFilter" class="filter-select">
+                            <option value="all">All Providers</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="llmFilter">LLM:</label>
+                        <select id="llmFilter" class="filter-select">
+                            <option value="all">All LLMs</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="hwFilter">Homework:</label>
+                        <select id="hwFilter" class="filter-select">
+                            <option value="all">All Homework</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="sortSelect">Sort:</label>
+                        <select id="sortSelect" class="filter-select">
+                            <option value="date-desc">Newest First</option>
+                            <option value="date-asc">Oldest First</option>
+                            <option value="views-desc">Most Views</option>
+                            <option value="author-asc">Author (A-Z)</option>
+                            <option value="llm-asc">LLM (A-Z)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Info -->
+            <div class="results-info">
+                <span id="results-count">168 submissions</span>
+                <button id="clearFilters" class="clear-btn" style="display: none;">Clear Filters</button>
+            </div>
+
+            <!-- Submissions Grid -->
+            <div class="submissions-grid" id="submissionsList">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <!-- Populated by JS -->
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <p>CS 182/282A Deep Learning &middot; UC Berkeley &middot; Fall 2025</p>
+            <p class="footer-credits">Blue Team Enhanced &middot; Built with Claude Code</p>
+        </footer>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal" role="dialog" aria-modal="true">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-meta" id="modalMeta"></div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="browse.js"></script>
+</body>
+</html>

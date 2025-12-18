@@ -1,0 +1,15 @@
+# Environment variables (contains API token)
+.env
+
+# Python
+__pycache__/
+*.pyc
+.python-version
+
+# Downloaded data (too large for git)
+downloaded_threads/
+course_resources/
+participation_a_data.json
+
+# UV
+.venv/

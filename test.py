@@ -289,155 +289,118 @@ def download_thread(thread, course_id, download_folder, ed):
 def fetch_all_threads(ed, course_id):
     """
     Fetch all threads from a course with pagination support.
-    
+
     Args:
         ed: EdAPI instance
         course_id: Course ID
-    
+
     Returns:
         list: All threads from the course
     """
     print(f"Fetching threads from course ID: {course_id}...")
-    
+
     all_threads = []
-    page = 1
-    limit = 100
-    max_pages = 100
-    
-    # First fetch
-    initial_threads = ed.list_threads(course_id=course_id)
-    
-    if isinstance(initial_threads, dict):
-        threads_list = initial_threads.get('threads', initial_threads.get('data', initial_threads.get('items', [])))
-        total_count = initial_threads.get('total', initial_threads.get('count', initial_threads.get('total_count', None)))
-        has_more = initial_threads.get('has_more', initial_threads.get('next', initial_threads.get('has_next', None)) is not None)
-        if total_count:
-            print(f"Total threads available: {total_count}")
-    else:
-        threads_list = initial_threads if isinstance(initial_threads, list) else []
-        has_more = len(threads_list) == 30
-    
-    all_threads.extend(threads_list if isinstance(threads_list, list) else [])
-    
-    # Try pagination
-    if has_more or len(all_threads) == 30:
-        print(f"Attempting to fetch additional pages (current: {len(all_threads)} threads)...")
-        
-        pagination_params = [
-            {'offset': 30, 'limit': 100},
-        ]
-        
-        for params in pagination_params:
-            try:
-                more_threads = ed.list_threads(course_id=course_id, **params)
-                
-                if isinstance(more_threads, dict):
-                    more_threads_list = more_threads.get('threads', more_threads.get('data', []))
-                else:
-                    more_threads_list = more_threads
-                
-                if more_threads_list and len(more_threads_list) > 0:
-                    print(f"  ✓ Found {len(more_threads_list)} more threads")
-                    all_threads.extend(more_threads_list)
-                    break
-            except (TypeError, Exception) as e:
+    offset = 0
+    limit = 100  # Max per request
+
+    while True:
+        try:
+            print(f"  Fetching offset={offset}, limit={limit}...")
+            threads_response = ed.list_threads(course_id=course_id, offset=offset, limit=limit)
+
+            if isinstance(threads_response, dict):
+                threads_list = threads_response.get('threads', threads_response.get('data', threads_response.get('items', [])))
+            else:
+                threads_list = threads_response if isinstance(threads_response, list) else []
+
+            if not threads_list or len(threads_list) == 0:
+                print(f"  No more threads at offset {offset}")
+                break
+
+            print(f"  ✓ Got {len(threads_list)} threads")
+            all_threads.extend(threads_list)
+
+            # If we got fewer than limit, we've reached the end
+            if len(threads_list) < limit:
+                break
+
+            offset += len(threads_list)
+
+            # Safety limit
+            if offset > 5000:
+                print("  Reached safety limit (5000 threads)")
+                break
+
+        except Exception as e:
+            print(f"  Error at offset {offset}: {e}")
+            # Try with smaller limit
+            if limit > 30:
+                limit = 30
                 continue
-        
-        # Try looping through pages
-        if len(all_threads) == 30:
-            print(f"Trying to fetch all pages by incrementing offset...")
-            offset = 30
-            while offset < 10000:  # Safety limit
-                try:
-                    page_threads = ed.list_threads(course_id=course_id, offset=offset)
-                    if isinstance(page_threads, dict):
-                        page_threads_list = page_threads.get('threads', page_threads.get('data', []))
-                    else:
-                        page_threads_list = page_threads
-                    
-                    if not page_threads_list or len(page_threads_list) == 0:
-                        break
-                    
-                    print(f"  Offset {offset}: {len(page_threads_list)} threads")
-                    all_threads.extend(page_threads_list)
-                    offset += len(page_threads_list)
-                except (TypeError, Exception) as e:
-                    break
-    
-    print(f"✓ Total threads fetched: {len(all_threads)} thread(s)\n")
-    return all_threads
+            break
+
+    # Deduplicate by thread ID
+    seen_ids = set()
+    unique_threads = []
+    for thread in all_threads:
+        thread_id = thread.get('id')
+        if thread_id and thread_id not in seen_ids:
+            seen_ids.add(thread_id)
+            unique_threads.append(thread)
+
+    print(f"✓ Total unique threads fetched: {len(unique_threads)} thread(s)\n")
+    return unique_threads
 
 
 def fuzzy_match_title(title, pattern, threshold=0.7):
     """
     Perform fuzzy matching on title to catch variations and typos.
-    
+
     Args:
         title: Thread title to check
         pattern: Pattern to match against
         threshold: Similarity threshold (0.0 to 1.0)
-    
+
     Returns:
         bool: True if title matches pattern
     """
     title_lower = title.lower()
     pattern_lower = pattern.lower()
-    
+
+    # STRICT MATCHING FOR PARTICIPATION TYPE
+    # For "Special Participation A", we need to ensure it's specifically "A" not B/C/D/E
+    if 'participation' in pattern_lower:
+        # Extract the participation letter from pattern (e.g., 'a' from 'special participation a')
+        pattern_match = re.search(r'participation\s+([a-e])', pattern_lower)
+        if pattern_match:
+            required_letter = pattern_match.group(1)
+            # Check if title has "participation X" where X is NOT the required letter
+            title_participation = re.search(r'participation\s+([a-e])', title_lower)
+            if title_participation:
+                title_letter = title_participation.group(1)
+                if title_letter != required_letter:
+                    return False  # Wrong participation type, reject immediately
+            else:
+                # No participation letter found in title - check without strict letter
+                pass
+
     # Direct substring match (highest priority)
     if pattern_lower in title_lower:
         return True
-    
-    # Check for common abbreviations and variations
+
+    # Check for common abbreviations and variations for Participation A specifically
     variations = [
-        r'special\s+participation\s+a',
-        r'special\s+pariticipation\s+a',  # Common typo
-        r'spec\s+part\s+a',
-        r'spa\s*:',  # Special Participation A abbreviation
-        r'special\s+part\s+a',
+        r'special\s+participation\s+a\b',
+        r'special\s+pariticipation\s+a\b',  # Common typo
+        r'spec\s+part\s+a\b',
+        r'participation\s+a\b',
+        r'special\s+part\s+a\b',
     ]
-    
+
     for variation in variations:
         if re.search(variation, title_lower):
             return True
-    
-    # Extract key words from pattern
-    pattern_words = set(re.findall(r'\b\w+\b', pattern_lower))
-    # Remove common stop words
-    stop_words = {'a', 'an', 'the', 'is', 'in', 'on', 'at', 'to', 'for', 'of', 'and', 'or'}
-    pattern_words = {w for w in pattern_words if w not in stop_words and len(w) > 2}
-    
-    # Extract key words from title
-    title_words = set(re.findall(r'\b\w+\b', title_lower))
-    
-    # Check if significant words from pattern are in title
-    if pattern_words:
-        matching_words = pattern_words.intersection(title_words)
-        if len(matching_words) >= len(pattern_words) * 0.6:  # At least 60% of key words match
-            return True
-    
-    # Use fuzzy string matching
-    if FUZZYWUZZY_AVAILABLE:
-        # Use fuzzywuzzy for better matching
-        ratio = fuzz.partial_ratio(pattern_lower, title_lower)
-        if ratio >= threshold * 100:
-            return True
-        
-        # Also check token-based matching
-        token_ratio = fuzz.token_sort_ratio(pattern_lower, title_lower)
-        if token_ratio >= threshold * 100:
-            return True
-    else:
-        # Fall back to difflib
-        similarity = SequenceMatcher(None, pattern_lower, title_lower).ratio()
-        if similarity >= threshold:
-            return True
-        
-        # Check partial matches
-        for word in pattern_words:
-            for title_word in title_words:
-                if SequenceMatcher(None, word, title_word).ratio() >= 0.8:
-                    return True
-    
+
     return False
 
 

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Key insights on how LLMs perform on deep learning homework assignments.">
+    <title>Insights | CS 182/282A Special Participation A</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="page-container">
+        <!-- Header -->
+        <header class="site-header">
+            <div class="header-content">
+                <h1 class="site-title">Special Participation A</h1>
+                <p class="site-subtitle">CS 182/282A Deep Learning Directory</p>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="browse.html" class="nav-link">Browse All</a>
+            <a href="browse.html?view=llm" class="nav-link">By LLM</a>
+            <a href="browse.html?view=homework" class="nav-link">By Homework</a>
+            <a href="insights.html" class="nav-link active">Insights</a>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content insights-page">
+            <h2 class="page-title">Key Insights: How LLMs Perform on Deep Learning Homework</h2>
+
+            <section class="insight-section">
+                <h3>Overall Performance Patterns</h3>
+                <div class="insight-cards">
+                    <div class="insight-card">
+                        <div class="insight-icon">&#x1F4DD;</div>
+                        <h4>Mathematical Derivations</h4>
+                        <p>Most LLMs perform well on structured mathematical problems with clear steps. Models like Claude Opus 4.5, GPT 5.1, and DeepSeek often one-shot algebraic derivations correctly.</p>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">&#x1F914;</div>
+                        <h4>Conceptual Questions</h4>
+                        <p>LLMs tend to struggle more with intuition-based questions, often giving "first plausible" explanations that require human pushback to correct.</p>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">&#x26A0;</div>
+                        <h4>Confidence vs. Correctness</h4>
+                        <p>A recurring pattern is that models sound confident even when reasoning is incomplete or incorrect. They often hallucinate intermediate steps.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="insight-section">
+                <h3>Common Strengths</h3>
+                <ul class="insight-list strengths">
+                    <li>Strong performance on linear algebra and matrix calculus</li>
+                    <li>Good at following step-by-step derivation patterns</li>
+                    <li>Useful for brainstorming proof structures and confirming intuition</li>
+                    <li>Effective at explaining well-known results and concepts</li>
+                    <li>Models with "thinking" modes show improved reasoning transparency</li>
+                </ul>
+            </section>
+
+            <section class="insight-section">
+                <h3>Common Weaknesses</h3>
+                <ul class="insight-list weaknesses">
+                    <li><strong>Subtle Math Errors:</strong> Missing constants, incorrect simplifications, unjustified assumptions</li>
+                    <li><strong>PDF Parsing Issues:</strong> Some models struggle to correctly interpret mathematical notation from images</li>
+                    <li><strong>Hallucination:</strong> Models make up intermediate steps or explanations when unsure</li>
+                    <li><strong>Context Length:</strong> Longer problems cause format adherence decline and reasoning compression</li>
+                    <li><strong>Visual Analysis:</strong> Models tend to "guess" based on domain knowledge rather than analyzing actual data</li>
+                </ul>
+            </section>
+
+            <section class="insight-section">
+                <h3>LLM-Specific Observations</h3>
+                <div class="llm-grid">
+                    <div class="llm-card">
+                        <h4>Claude (Sonnet/Opus 4.5)</h4>
+                        <p>Excellent at algebraic reasoning and optimization problems. Extended thinking mode produces rigorous, paper-like solutions. Strong on mechanical reasoning, weaker on conceptual intuition without prompting.</p>
+                    </div>
+                    <div class="llm-card">
+                        <h4>GPT 5.1 (Pro/Thinking/Extended)</h4>
+                        <p>Impressive one-shot capabilities on many problems. Useful as a "pocket-TA" but requires fundamental understanding to verify outputs. Extended thinking mode shows clearer reasoning.</p>
+                    </div>
+                    <div class="llm-card">
+                        <h4>DeepSeek v3.2</h4>
+                        <p>Strong grasp of linear algebra and calculus concepts. Good chain-of-thought reasoning. Tendency to simplify qualitative analysis using numerical examples rather than general derivations.</p>
+                    </div>
+                    <div class="llm-card">
+                        <h4>Gemini (Pro 3 / Flash)</h4>
+                        <p>Consistently includes intermediate steps that other LLMs skip. Good at geometric interpretations. "Thinking" mode delivers interpretations clearly on first try.</p>
+                    </div>
+                    <div class="llm-card">
+                        <h4>Mistral</h4>
+                        <p>High accuracy (99%) on some assignments with minimal errors. Zero arithmetic errors on well-structured problems. Initially acts as pedagogical tutor rather than solution key.</p>
+                    </div>
+                    <div class="llm-card">
+                        <h4>Kimi K2</h4>
+                        <p>Strong performance on mathematical derivations. Good at structured problems with clear steps. Sometimes needs explicit prompting for detailed explanations.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="insight-section">
+                <h3>Recommendations for Using LLMs on Homework</h3>
+                <div class="recommendations">
+                    <div class="rec-item">
+                        <span class="rec-number">1</span>
+                        <p>Use LLMs for brainstorming and verifying intuition, not as a replacement for understanding</p>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-number">2</span>
+                        <p>Always verify mathematical derivations - subtle errors are common</p>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-number">3</span>
+                        <p>Use "thinking" or "extended thinking" modes when available for better reasoning</p>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-number">4</span>
+                        <p>Provide explicit instructions for output format and level of detail</p>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-number">5</span>
+                        <p>When models struggle, break problems into smaller parts</p>
+                    </div>
+                    <div class="rec-item">
+                        <span class="rec-number">6</span>
+                        <p>Human oversight remains essential - "meaningful human guidance is required throughout"</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <p>CS 182/282A Deep Learning &middot; UC Berkeley &middot; Fall 2025</p>
+            <p class="footer-credits">Blue Team Enhanced &middot; Built with Claude Code</p>
+        </footer>
+    </div>
+
+    <script src="data.js"></script>
+</body>
+</html>
