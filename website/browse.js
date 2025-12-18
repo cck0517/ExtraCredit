@@ -13,6 +13,8 @@
         hw: 'all',
         sort: 'date-desc'
     };
+    let lastFocusedElement = null;
+    let activeModalThreadId = null;
 
     document.addEventListener('DOMContentLoaded', function() {
         if (typeof participationData === 'undefined') {
@@ -26,7 +28,9 @@
         populateFilters();
         parseUrlParams();
         setupEventListeners();
+        setupHistorySync();
         applyFiltersAndRender();
+        syncModalToUrl();
     }
 
     function populateFilters() {
@@ -144,10 +148,7 @@
             if (searchInput) searchInput.value = currentFilters.search;
         }
 
-        if (params.has('thread')) {
-            const threadId = parseInt(params.get('thread'));
-            setTimeout(() => openThreadModal(threadId), 100);
-        }
+        // Thread modal is handled by syncModalToUrl() after initial render.
     }
 
     function setupEventListeners() {
@@ -204,15 +205,25 @@
         }
 
         // Modal close handlers
-        const modal = document.getElementById('modal');
         const closeBtn = document.querySelector('.modal-close');
         const overlay = document.querySelector('.modal-overlay');
 
-        if (closeBtn) closeBtn.addEventListener('click', closeModal);
-        if (overlay) overlay.addEventListener('click', closeModal);
+        if (closeBtn) closeBtn.addEventListener('click', () => closeModal());
+        if (overlay) overlay.addEventListener('click', () => closeModal());
 
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeModal();
+            const modal = document.getElementById('modal');
+            if (!modal || !modal.classList.contains('open')) return;
+
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                closeModal();
+                return;
+            }
+
+            if (e.key === 'Tab') {
+                trapFocus(e);
+            }
         });
     }
 
@@ -288,11 +299,14 @@
         if (currentFilters.llm !== 'all') params.set('llm', currentFilters.llm);
         if (currentFilters.hw !== 'all') params.set('hw', currentFilters.hw);
 
+        const currentParams = new URLSearchParams(window.location.search);
+        if (currentParams.has('thread')) params.set('thread', currentParams.get('thread'));
+
         const newUrl = params.toString()
             ? `${window.location.pathname}?${params.toString()}`
             : window.location.pathname;
 
-        history.replaceState(null, '', newUrl);
+        history.replaceState(history.state, '', newUrl);
 
         // Update active filters and clear button
         const hasFilters = currentFilters.search ||
@@ -393,9 +407,10 @@
         // Add click handlers
         container.querySelectorAll('.submission-card').forEach(card => {
             card.addEventListener('click', function(e) {
+                if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
                 e.preventDefault();
                 const threadId = parseInt(this.dataset.threadId);
-                openThreadModal(threadId);
+                openThreadModal(threadId, this, { updateHistory: true });
             });
         });
     }
@@ -406,8 +421,10 @@
             : thread.content;
         const date = formatDate(thread.created_at);
 
+        const href = getThreadHref(thread.id);
+
         return `
-            <article class="submission-card" data-thread-id="${thread.id}">
+            <a class="submission-card" data-thread-id="${thread.id}" href="${escapeHtml(href)}">
                 <div class="card-tags">
                     <span class="tag tag-provider">${escapeHtml(thread.provider || 'Other')}</span>
                     <span class="tag tag-llm">${escapeHtml(thread.llm_used)}</span>
@@ -420,7 +437,7 @@
                     <span class="card-date">${date}</span>
                     <span class="card-views">${thread.view_count} views</span>
                 </div>
-            </article>
+            </a>
         `;
     }
 
@@ -464,7 +481,9 @@
                 currentPage = parseInt(this.dataset.page);
                 renderSubmissions();
                 renderPagination();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                const prefersReducedMotion = window.matchMedia &&
+                    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
             });
         });
     }
@@ -497,7 +516,7 @@
         applyFiltersAndRender();
     }
 
-    function openThreadModal(threadId) {
+    function openThreadModal(threadId, triggerEl, { updateHistory = true } = {}) {
         const thread = participationData.threads.find(t => t.id === threadId);
         if (!thread) return;
 
@@ -506,6 +525,11 @@
         const meta = document.getElementById('modalMeta');
         const body = document.getElementById('modalBody');
         const footer = document.getElementById('modalFooter');
+
+        if (activeModalThreadId === threadId && modal.classList.contains('open')) return;
+
+        lastFocusedElement = triggerEl || document.activeElement;
+        activeModalThreadId = threadId;
 
         title.textContent = thread.title;
 
@@ -550,26 +574,106 @@
         footer.innerHTML = footerHtml;
 
         modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
 
+        const closeBtn = modal.querySelector('.modal-close');
+        if (closeBtn) closeBtn.focus();
+
         // Update URL
-        const params = new URLSearchParams(window.location.search);
-        params.set('thread', threadId);
-        history.pushState(null, '', `${window.location.pathname}?${params.toString()}`);
+        if (updateHistory) {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('thread') !== String(threadId)) {
+                params.set('thread', threadId);
+                history.pushState({ threadId }, '', `${window.location.pathname}?${params.toString()}`);
+            }
+        }
     }
 
-    function closeModal() {
+    function closeModal({ updateHistory = true } = {}) {
         const modal = document.getElementById('modal');
+        if (!modal || !modal.classList.contains('open')) return;
+
         modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+        activeModalThreadId = null;
 
         // Remove thread from URL
+        if (updateHistory) {
+            const params = new URLSearchParams(window.location.search);
+            params.delete('thread');
+            const newUrl = params.toString()
+                ? `${window.location.pathname}?${params.toString()}`
+                : window.location.pathname;
+            history.replaceState(null, '', newUrl);
+        }
+
+        if (lastFocusedElement && document.contains(lastFocusedElement)) {
+            lastFocusedElement.focus();
+        } else {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) searchInput.focus();
+        }
+
+        lastFocusedElement = null;
+    }
+
+    function setupHistorySync() {
+        window.addEventListener('popstate', syncModalToUrl);
+    }
+
+    function syncModalToUrl() {
         const params = new URLSearchParams(window.location.search);
-        params.delete('thread');
-        const newUrl = params.toString()
-            ? `${window.location.pathname}?${params.toString()}`
-            : window.location.pathname;
-        history.pushState(null, '', newUrl);
+        if (params.has('thread')) {
+            const threadId = parseInt(params.get('thread'));
+            if (Number.isFinite(threadId)) {
+                openThreadModal(threadId, null, { updateHistory: false });
+            }
+            return;
+        }
+
+        closeModal({ updateHistory: false });
+    }
+
+    function getThreadHref(threadId) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('thread', threadId);
+        return `${window.location.pathname}?${params.toString()}`;
+    }
+
+    function trapFocus(e) {
+        const modal = document.getElementById('modal');
+        const container = modal ? modal.querySelector('.modal-container') : null;
+        if (!container) return;
+
+        const focusable = getFocusableElements(container);
+        if (focusable.length === 0) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const active = document.activeElement;
+
+        if (e.shiftKey && active === first) {
+            e.preventDefault();
+            last.focus();
+            return;
+        }
+
+        if (!e.shiftKey && active === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    }
+
+    function getFocusableElements(container) {
+        return Array.from(container.querySelectorAll(
+            'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )).filter(el => {
+            if (el.hasAttribute('disabled')) return false;
+            if (el.getAttribute('aria-hidden') === 'true') return false;
+            return el.offsetParent !== null;
+        });
     }
 
     function formatDate(dateStr) {

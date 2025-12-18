@@ -34,6 +34,18 @@
         const el = document.getElementById(id);
         if (!el) return;
 
+        if (!Number.isFinite(target)) {
+            el.textContent = target;
+            return;
+        }
+
+        const prefersReducedMotion = window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) {
+            el.textContent = target;
+            return;
+        }
+
         let current = 0;
         const duration = 1000;
         const step = target / (duration / 16);

@@ -89,8 +89,11 @@
         }
         .llm-badge {
             display: inline-block;
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            background: rgb(var(--pill-rgb, 59 130 246) / var(--pill-alpha-bg));
+            border: 1px solid rgb(var(--pill-rgb, 59 130 246) / var(--pill-alpha-border));
+            color: var(--pill-fg, var(--text-color));
             padding: 0.25rem 0.5rem;
             border-radius: 4px;
             font-size: 0.75rem;
@@ -158,8 +161,11 @@
         }
         .llm-detail-card .tag {
             display: inline-block;
-            background: rgba(34, 197, 94, 0.2);
-            color: #4ade80;
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            background: rgb(var(--pill-rgb, 34 197 94) / var(--pill-alpha-bg));
+            border: 1px solid rgb(var(--pill-rgb, 34 197 94) / var(--pill-alpha-border));
+            color: var(--pill-fg, var(--text-color));
             padding: 0.125rem 0.375rem;
             border-radius: 4px;
             font-size: 0.7rem;
@@ -177,6 +183,7 @@
     </style>
 </head>
 <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
     <div class="page-container">
         <!-- Header with Navigation -->
         <header class="site-header">
@@ -197,8 +204,8 @@
         </header>
 
         <!-- Main Content -->
-        <main class="main-content insights-page">
-            <h2 class="page-title">Data Insights: LLM Performance on Deep Learning Homework</h2>
+        <main class="main-content insights-page" id="main">
+            <h1 class="page-title">Data Insights: LLM Performance on Deep Learning Homework</h1>
 
             <!-- Key Statistics -->
             <div class="stats-grid">
@@ -224,7 +231,10 @@
             <section class="insight-section">
                 <h3>LLM Usage Distribution</h3>
                 <div class="chart-container">
-                    <img src="chart_llm_distribution.png" alt="Top 10 LLMs by Submission Count">
+                    <picture>
+                        <source srcset="chart_llm_distribution_dark.png" media="(prefers-color-scheme: dark)">
+                        <img src="chart_llm_distribution_light.png" alt="Top 10 LLMs by Submission Count" loading="lazy" decoding="async">
+                    </picture>
                 </div>
             </section>
 
@@ -232,10 +242,16 @@
                 <h3>Provider & Homework Analysis</h3>
                 <div class="chart-row">
                     <div class="chart-container">
-                        <img src="chart_provider_distribution.png" alt="Submissions by Provider">
+                        <picture>
+                            <source srcset="chart_provider_distribution_dark.png" media="(prefers-color-scheme: dark)">
+                            <img src="chart_provider_distribution_light.png" alt="Submissions by Provider" loading="lazy" decoding="async">
+                        </picture>
                     </div>
                     <div class="chart-container">
-                        <img src="chart_hw_distribution.png" alt="Submissions per Homework">
+                        <picture>
+                            <source srcset="chart_hw_distribution_dark.png" media="(prefers-color-scheme: dark)">
+                            <img src="chart_hw_distribution_light.png" alt="Submissions per Homework" loading="lazy" decoding="async">
+                        </picture>
                     </div>
                 </div>
             </section>
@@ -243,7 +259,10 @@
             <section class="insight-section">
                 <h3>LLM Usage by Homework Assignment</h3>
                 <div class="chart-container">
-                    <img src="chart_llm_by_hw.png" alt="LLM Usage by Homework">
+                    <picture>
+                        <source srcset="chart_llm_by_hw_dark.png" media="(prefers-color-scheme: dark)">
+                        <img src="chart_llm_by_hw_light.png" alt="LLM Usage by Homework" loading="lazy" decoding="async">
+                    </picture>
                 </div>
             </section>
 
@@ -531,6 +550,6 @@
         </footer>
     </div>
 
-    <script src="data.js"></script>
+    <script src="insights.js"></script>
 </body>
 </html>

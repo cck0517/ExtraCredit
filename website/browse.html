@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
     <div class="page-container">
         <!-- Header with Navigation -->
         <header class="site-header">
@@ -31,10 +32,12 @@
         </header>
 
         <!-- Main Content -->
-        <main class="main-content browse-page">
+        <main class="main-content browse-page" id="main">
+            <h1 class="page-title">Browse Submissions</h1>
             <!-- Search and Controls -->
             <div class="browse-controls">
                 <div class="search-box">
+                    <label for="searchInput" class="visually-hidden">Search submissions</label>
                     <input type="text" id="searchInput" placeholder="Search by student, LLM, homework, or keyword..." class="search-input">
                 </div>
                 <div class="control-row">
@@ -93,14 +96,14 @@
 
         <!-- Footer -->
         <footer class="site-footer">
-            <p>CS 182/282A Deep Learning &middot; UC Berkeley &middot; Fall 2025</span>
-            <p class="footer-credits">Blue Team Enhanced &middot; Built with Claude Code</span>
+            <p>CS 182/282A Deep Learning &middot; UC Berkeley &middot; Fall 2025</p>
+            <p class="footer-credits">Blue Team Enhanced &middot; Built with Claude Code</p>
         </footer>
     </div>
 
     <!-- Modal -->
-    <div class="modal" id="modal" role="dialog" aria-modal="true">
-        <div class="modal-overlay"></div>
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalBody" aria-hidden="true">
+        <div class="modal-overlay" aria-hidden="true"></div>
         <div class="modal-container">
             <div class="modal-header">
                 <h2 id="modalTitle"></h2>

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
     <div class="page-container">
         <!-- Header with Navigation -->
         <header class="site-header">
@@ -31,10 +32,10 @@
         </header>
 
         <!-- Main Content -->
-        <main class="main-content">
+        <main class="main-content" id="main">
             <!-- Hero Section -->
             <section class="hero-section">
-                <h2 class="hero-title">LLM Performance on Deep Learning Homework</h2>
+                <h1 class="hero-title">LLM Performance on Deep Learning Homework</h1>
                 <p class="hero-description">
                     A curated collection of student experiments evaluating how various Large Language Models
                     perform on CS 182/282A homework assignments. Explore insights, compare models, and
@@ -70,7 +71,7 @@
 
             <!-- Quick Access - Providers -->
             <section class="quick-access-section">
-                <h3 class="section-title">By Provider</h3>
+                <h2 class="section-title">By Provider</h2>
                 <div class="tag-cloud" id="provider-tags">
                     <!-- Populated by JS -->
                 </div>
@@ -78,7 +79,7 @@
 
             <!-- Quick Access - LLMs -->
             <section class="quick-access-section">
-                <h3 class="section-title">Popular LLMs</h3>
+                <h2 class="section-title">Popular LLMs</h2>
                 <div class="tag-cloud" id="llm-tags">
                     <!-- Populated by JS -->
                 </div>
@@ -86,7 +87,7 @@
 
             <!-- Quick Access - Homework -->
             <section class="quick-access-section">
-                <h3 class="section-title">Homework Assignments</h3>
+                <h2 class="section-title">Homework Assignments</h2>
                 <div class="tag-cloud" id="hw-tags">
                     <!-- Populated by JS -->
                 </div>
@@ -95,7 +96,7 @@
             <!-- Recent Submissions Preview -->
             <section class="recent-section">
                 <div class="section-header">
-                    <h3 class="section-title">Recent Submissions</h3>
+                    <h2 class="section-title">Recent Submissions</h2>
                     <a href="browse.html" class="view-all-link">View all &rarr;</a>
                 </div>
                 <div class="submissions-preview" id="recent-submissions">
